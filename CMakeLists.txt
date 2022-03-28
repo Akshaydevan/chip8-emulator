@@ -7,4 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(chip8-emulator
     main.cpp
+    emulator.hpp
+    emulator.cpp
 )
