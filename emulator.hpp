@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-uint16_t byteIndex(std::uint16_t, int);
+uint16_t byteAtIndex(std::uint16_t, int, int = 0);
 
 class Emulator
 {
@@ -15,5 +15,7 @@ public:
 
 private:
     std::vector<std::uint16_t> m_memory;
+    std::vector<std::uint16_t> m_registers;
+    std::uint16_t m_registerI;
 };
 
