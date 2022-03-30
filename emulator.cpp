@@ -11,7 +11,6 @@ bool Emulator::loadROM(std::string filename) {
     std::ifstream file(filename, std::fstream::binary);
 
     if (!file.is_open()) {
-        std::cerr << "cannot open file";
         return false;
     }
 
