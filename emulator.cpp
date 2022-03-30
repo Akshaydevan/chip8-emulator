@@ -1,5 +1,6 @@
 #include "emulator.hpp"
 #include <fstream>
+#include <sstream>
 
 Emulator::Emulator()
 {
@@ -24,6 +25,18 @@ bool Emulator::loadROM(std::string filename) {
     }
 
     return true;
+}
+
+void Emulator::loadROMString(std::string rom) {
+    std::stringstream stream;
+
+    stream << std::hex << rom;
+
+    std::uint16_t opcode;
+
+    while(stream >> opcode){
+        m_memory.push_back(opcode);
+    }
 }
 
 void Emulator::runROM() {

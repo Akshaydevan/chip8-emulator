@@ -11,6 +11,7 @@ public:
     Emulator();
 
     bool loadROM(std::string);
+    void loadROMString(std::string);
     void runROM();
 
 private:
