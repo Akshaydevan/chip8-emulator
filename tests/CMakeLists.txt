@@ -16,7 +16,7 @@ add_executable(opcode_tests
   opcodetest.cpp
 )
 
-target_link_libraries(opcode_tests PRIVATE gtest_main)
+target_link_libraries(opcode_tests PRIVATE emulator gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(opcode_tests)
