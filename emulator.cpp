@@ -42,7 +42,7 @@ void Emulator::loadROMString(std::string rom) {
 void Emulator::runROM() {
     auto progCounter = m_memory.begin();
 
-    while(true) {
+    while(progCounter < m_memory.end()) {
         std::uint16_t opcode = *progCounter;
 
         switch(byteAtIndex(opcode, 1)) {
