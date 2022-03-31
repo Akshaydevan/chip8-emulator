@@ -14,6 +14,8 @@ public:
     void loadROMString(std::string);
     void runROM();
 
+    std::vector<std::uint16_t>& getRegisters();
+
 private:
     std::vector<std::uint16_t> m_memory;
     std::vector<std::uint16_t> m_registers;
