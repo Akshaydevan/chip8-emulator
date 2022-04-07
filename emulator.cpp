@@ -7,6 +7,7 @@ Emulator::Emulator()
 {
     m_memory.resize(4096);
     m_registers.resize(16);
+    m_displayBuffer.fill(0);
 
     std::srand(std::time(nullptr));
 }
