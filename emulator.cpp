@@ -1,11 +1,14 @@
 #include "emulator.hpp"
 #include <fstream>
 #include <sstream>
+#include <ctime>
 
 Emulator::Emulator()
 {
-    m_memory.reserve(4096);
+    m_memory.resize(4096);
     m_registers.resize(16);
+
+    std::srand(std::time(nullptr));
 }
 
 bool Emulator::loadROM(std::string filename) {
@@ -27,16 +30,8 @@ bool Emulator::loadROM(std::string filename) {
     return true;
 }
 
-void Emulator::loadROMString(std::string rom) {
-    std::stringstream stream;
-
-    stream << std::hex << rom;
-
-    std::uint16_t opcode;
-
-    while(stream >> opcode){
-        m_memory.push_back(opcode);
-    }
+void Emulator::loadROM(std::vector<std::uint16_t> &rom) {
+    std::copy(rom.begin(), rom.end(), m_memory.begin());
 }
 
 void Emulator::runROM() {
@@ -111,9 +106,36 @@ void Emulator::runROM() {
             }
             break;
         }
+
+        case 9:
+            if(m_registers[byteAtIndex(opcode, 2)] != m_registers[byteAtIndex(opcode, 3)]) {
+                progCounter++;
+            }
+
         case 10:
             m_registerI = byteAtIndex(opcode, 2, 4);
             break;
+
+        case 12:
+            m_registers[byteAtIndex(opcode, 2)] = (std::rand() % 255) & byteAtIndex(opcode, 3, 4);
+
+        case 15:{
+            if (byteAtIndex(opcode, 4) == 0x0E) {
+                m_registerI += m_registers[byteAtIndex(opcode, 2)];
+            }
+            else if (byteAtIndex(opcode, 3, 4) == 85) {
+                //subtracting 512 from registerI as memory starts from 0
+
+                for(int i = 0; i <16; i++) {
+                    m_memory[(m_registerI - 512) + i] = m_registers[i];
+                }
+            }
+            else if (byteAtIndex(opcode, 3, 4) == 101) {
+                for(int i = 0; i <16; i++) {
+                    m_registers[i] = m_memory[(m_registerI - 512) + i];
+                }
+            }
+        }
 
         default:
             break;
