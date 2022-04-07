@@ -43,6 +43,9 @@ void Emulator::runROM() {
 
         switch(byteAtIndex(opcode, 1)) {
         case 0:
+            if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0) {
+                std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
+            }
             break;
 
         case 3:
