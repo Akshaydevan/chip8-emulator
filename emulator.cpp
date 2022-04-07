@@ -58,12 +58,27 @@ void Emulator::runROM() {
             if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0) {
                 std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
             }
+            else if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0x0E) {
+                progCounter = m_callStack.top();
+
+                m_callStack.pop();
+            }
             break;
 
         case 1:{
             int jumpaddress = byteAtIndex(opcode, 2, 4);
             progCounter = m_memory.begin() + (jumpaddress - 1);
-            break;
+
+            continue;
+        }
+
+        case 2:{
+            m_callStack.push(progCounter + 2);
+
+            int calladdress = byteAtIndex(opcode, 2, 4);
+            progCounter = m_memory.begin() + (calladdress - 1);
+
+            continue;
         }
 
         case 3:
