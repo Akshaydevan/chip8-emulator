@@ -11,7 +11,7 @@ public:
     Emulator();
 
     bool loadROM(std::string);
-    void loadROMString(std::string);
+    void loadROM(std::vector<std::uint16_t> &);
     void runROM();
 
     std::vector<std::uint16_t>& getRegisters();
