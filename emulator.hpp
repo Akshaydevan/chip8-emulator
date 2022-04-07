@@ -16,10 +16,10 @@ public:
     void runROM();
 
     std::vector<std::uint16_t>& getRegisters();
-    std::vector<std::uint16_t>& getMemory();
+    std::vector<std::uint8_t>& getMemory();
 
 private:
-    std::vector<std::uint16_t> m_memory;
+    std::vector<std::uint8_t> m_memory;
     std::vector<std::uint16_t> m_registers;
     std::uint16_t m_registerI;
     std::array<bool, 2048> m_displayBuffer;

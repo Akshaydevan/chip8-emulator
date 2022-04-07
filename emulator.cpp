@@ -21,25 +21,37 @@ bool Emulator::loadROM(std::string filename) {
 
     std::uint8_t higherbyte, lowerbyte;
 
-    for(int i = 512; file >> higherbyte; i++) {
+    for(int index = 512; file >> higherbyte; index++) {
         file >> lowerbyte;
 
-        std::uint16_t opcode = (higherbyte << 8) | lowerbyte;
-        m_memory[i] = opcode;
+        m_memory[index] = higherbyte;
+        m_memory[index + 1] = lowerbyte;
+
+        index += 2;
     }
 
     return true;
 }
 
 void Emulator::loadROM(std::vector<std::uint16_t> &rom) {
-    std::copy(rom.begin(), rom.end(), m_memory.begin() + 512);
+    int index = 512;
+
+    for (auto opcode : rom) {
+        uint8_t higherbyte = opcode >> 8;
+        uint8_t lowerbyte = opcode & 0x0FF;
+
+        m_memory[index] = higherbyte;
+        m_memory[index + 1] = lowerbyte;
+
+        index += 2;
+    }
 }
 
 void Emulator::runROM() {
     auto progCounter = m_memory.begin() + 512;
 
-    while(progCounter < m_memory.end()) {
-        std::uint16_t opcode = *progCounter;
+    while(progCounter < m_memory.end() - 1) {
+        std::uint16_t opcode = ((*progCounter) << 8) | *(progCounter + 1);
 
         switch(byteAtIndex(opcode, 1)) {
         case 0:
@@ -151,7 +163,7 @@ std::vector<std::uint16_t>& Emulator::getRegisters() {
     return m_registers;
 }
 
-std::vector<std::uint16_t>& Emulator::getMemory() {
+std::vector<std::uint8_t>& Emulator::getMemory() {
     return m_memory;
 }
 
