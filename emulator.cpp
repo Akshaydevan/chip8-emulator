@@ -60,6 +60,12 @@ void Emulator::runROM() {
             }
             break;
 
+        case 1:{
+            int jumpaddress = byteAtIndex(opcode, 2, 4);
+            progCounter = m_memory.begin() + (jumpaddress - 1);
+            break;
+        }
+
         case 3:
             if (m_registers[byteAtIndex(opcode, 2)] == byteAtIndex(opcode, 3, 4)) {
                progCounter++;
