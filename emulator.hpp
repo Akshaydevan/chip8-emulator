@@ -15,6 +15,7 @@ public:
     void runROM();
 
     std::vector<std::uint16_t>& getRegisters();
+    std::vector<std::uint16_t>& getMemory();
 
 private:
     std::vector<std::uint16_t> m_memory;

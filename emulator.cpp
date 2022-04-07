@@ -149,6 +149,9 @@ std::vector<std::uint16_t>& Emulator::getRegisters() {
     return m_registers;
 }
 
+std::vector<std::uint16_t>& Emulator::getMemory() {
+    return m_memory;
+}
 
 uint16_t byteAtIndex(std::uint16_t b, int i, int j) {
     std::uint16_t mask = 0;
