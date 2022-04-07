@@ -20,22 +20,22 @@ bool Emulator::loadROM(std::string filename) {
 
     std::uint8_t higherbyte, lowerbyte;
 
-    while(file >> higherbyte) {
+    for(int i = 512; file >> higherbyte; i++) {
         file >> lowerbyte;
 
         std::uint16_t opcode = (higherbyte << 8) | lowerbyte;
-        m_memory.push_back(opcode);
+        m_memory[i] = opcode;
     }
 
     return true;
 }
 
 void Emulator::loadROM(std::vector<std::uint16_t> &rom) {
-    std::copy(rom.begin(), rom.end(), m_memory.begin());
+    std::copy(rom.begin(), rom.end(), m_memory.begin() + 512);
 }
 
 void Emulator::runROM() {
-    auto progCounter = m_memory.begin();
+    auto progCounter = m_memory.begin() + 512;
 
     while(progCounter < m_memory.end()) {
         std::uint16_t opcode = *progCounter;
@@ -124,15 +124,13 @@ void Emulator::runROM() {
                 m_registerI += m_registers[byteAtIndex(opcode, 2)];
             }
             else if (byteAtIndex(opcode, 3, 4) == 85) {
-                //subtracting 512 from registerI as memory starts from 0
-
                 for(int i = 0; i <16; i++) {
-                    m_memory[(m_registerI - 512) + i] = m_registers[i];
+                    m_memory[m_registerI + i] = m_registers[i];
                 }
             }
             else if (byteAtIndex(opcode, 3, 4) == 101) {
                 for(int i = 0; i <16; i++) {
-                    m_registers[i] = m_memory[(m_registerI - 512) + i];
+                    m_registers[i] = m_memory[m_registerI + i];
                 }
             }
         }
