@@ -127,6 +127,7 @@ void Emulator::runROM() {
             if(m_registers[byteAtIndex(opcode, 2)] != m_registers[byteAtIndex(opcode, 3)]) {
                 progCounter++;
             }
+            break;
 
         case 10:
             m_registerI = byteAtIndex(opcode, 2, 4);
@@ -134,6 +135,7 @@ void Emulator::runROM() {
 
         case 12:
             m_registers[byteAtIndex(opcode, 2)] = (std::rand() % 255) & byteAtIndex(opcode, 3, 4);
+            break;
 
         case 15:{
             if (byteAtIndex(opcode, 4) == 0x0E) {
@@ -150,6 +152,7 @@ void Emulator::runROM() {
                 }
             }
         }
+        break;
 
         default:
             break;
