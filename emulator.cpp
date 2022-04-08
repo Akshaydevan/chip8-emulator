@@ -154,6 +154,13 @@ void Emulator::runROM() {
             m_registerI = byteAtIndex(opcode, 2, 4);
             break;
 
+        case 11:{
+            int jumpaddress = byteAtIndex(opcode, 2, 4);
+            progCounter = m_memory.begin() + (jumpaddress + m_registers[0]);
+
+            continue;
+        }
+
         case 12:
             m_registers[byteAtIndex(opcode, 2)] = (std::rand() % 255) & byteAtIndex(opcode, 3, 4);
             break;
