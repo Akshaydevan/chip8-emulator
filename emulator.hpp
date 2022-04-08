@@ -14,7 +14,9 @@ public:
 
     bool loadROM(std::string);
     void loadROM(std::vector<std::uint16_t> &);
-    void runROM();
+    void runNextCycle();
+
+    bool isEnd();
 
     std::vector<std::uint16_t>& getRegisters();
     std::vector<std::uint8_t>& getMemory();
@@ -25,5 +27,7 @@ private:
     std::vector<std::uint16_t> m_registers;
     std::uint16_t m_registerI;
     std::array<bool, 2048> m_displayBuffer;
+    std::vector<std::uint8_t>::iterator m_progCounter;
+    bool m_endOfROM;
 };
 

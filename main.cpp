@@ -10,7 +10,9 @@ int main() {
         return -1;
     }
 
-    chip8.runROM();
+    while(!chip8.isEnd()){
+        chip8.runNextCycle();
+    }
 
     return 0;
 }

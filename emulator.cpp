@@ -8,6 +8,8 @@ Emulator::Emulator()
     m_memory.resize(4096);
     m_registers.resize(16);
     m_displayBuffer.fill(0);
+    m_progCounter = m_memory.begin() + 512;
+    m_endOfROM = false;
 
     std::srand(std::time(nullptr));
 }
@@ -47,149 +49,152 @@ void Emulator::loadROM(std::vector<std::uint16_t> &rom) {
     }
 }
 
-void Emulator::runROM() {
-    auto progCounter = m_memory.begin() + 512;
+void Emulator::runNextCycle() {
+    if (m_progCounter >= m_memory.end() - 1){
+        m_endOfROM = true;
+        return;
+    }
 
-    while(progCounter < m_memory.end() - 1) {
-        std::uint16_t opcode = ((*progCounter) << 8) | *(progCounter + 1);
+    std::uint16_t opcode = ((*m_progCounter) << 8) | *(m_progCounter + 1);
 
-        switch(byteAtIndex(opcode, 1)) {
-        case 0:
-            if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0) {
-                std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
-            }
-            else if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0x0E) {
-                progCounter = m_callStack.top();
-
-                m_callStack.pop();
-
-                continue;
-            }
-            break;
-
-        case 1:{
-            int jumpaddress = byteAtIndex(opcode, 2, 4);
-            progCounter = m_memory.begin() + (jumpaddress);
-
-            continue;
+    switch(byteAtIndex(opcode, 1)) {
+    case 0:
+        if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0) {
+            std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
         }
+        else if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0x0E) {
+            m_progCounter = m_callStack.top();
 
-        case 2:{
-            m_callStack.push(progCounter + 2);
+            m_callStack.pop();
 
-            int calladdress = byteAtIndex(opcode, 2, 4);
-            progCounter = m_memory.begin() + (calladdress);
-
-            continue;
-        }
-
-        case 3:
-            if (m_registers[byteAtIndex(opcode, 2)] == byteAtIndex(opcode, 3, 4)) {
-               progCounter++;
-            }
-            break;
-
-        case 4:
-            if (m_registers[byteAtIndex(opcode, 2)] != byteAtIndex(opcode, 3, 4)) {
-               progCounter++;
-            }
-            break;
-
-        case 5:
-            if (m_registers[byteAtIndex(opcode, 2)] == m_registers[byteAtIndex(opcode, 3)]) {
-               progCounter++;
-            }
-            break;
-
-        case 6:
-            m_registers[byteAtIndex(opcode, 2)] = byteAtIndex(opcode, 3, 4);
-            break;
-
-        case 7:
-            m_registers[byteAtIndex(opcode, 2)] += byteAtIndex(opcode, 3, 4);
-            break;
-
-        case 8:{
-            if (m_registers[byteAtIndex(opcode, 4)] == 0){
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 1){
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] | m_registers[byteAtIndex(opcode, 3)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 2){
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] & m_registers[byteAtIndex(opcode, 3)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 3){
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] ^ m_registers[byteAtIndex(opcode, 3)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 4){
-                m_registers[byteAtIndex(opcode, 2)] += m_registers[byteAtIndex(opcode, 3)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 5){
-                m_registers[byteAtIndex(opcode, 2)] -= m_registers[byteAtIndex(opcode, 3)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 6){
-                std::uint16_t leastbit = m_registers[byteAtIndex(opcode, 2)] << 15;
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] >> 1;
-
-                m_registers[15] = leastbit;
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 7){
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)] - m_registers[byteAtIndex(opcode, 2)];
-            }
-            else if (m_registers[byteAtIndex(opcode, 4)] == 14){
-                std::uint16_t mostsigbit = m_registers[byteAtIndex(opcode, 2)] >> 15;
-                m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] << 1;
-
-                m_registers[15] = mostsigbit;
-            }
-            break;
-        }
-
-        case 9:
-            if(m_registers[byteAtIndex(opcode, 2)] != m_registers[byteAtIndex(opcode, 3)]) {
-                progCounter++;
-            }
-            break;
-
-        case 10:
-            m_registerI = byteAtIndex(opcode, 2, 4);
-            break;
-
-        case 11:{
-            int jumpaddress = byteAtIndex(opcode, 2, 4);
-            progCounter = m_memory.begin() + (jumpaddress + m_registers[0]);
-
-            continue;
-        }
-
-        case 12:
-            m_registers[byteAtIndex(opcode, 2)] = (std::rand() % 255) & byteAtIndex(opcode, 3, 4);
-            break;
-
-        case 15:{
-            if (byteAtIndex(opcode, 4) == 0x0E) {
-                m_registerI += m_registers[byteAtIndex(opcode, 2)];
-            }
-            else if (byteAtIndex(opcode, 3, 4) == 85) {
-                for(int i = 0; i <16; i++) {
-                    m_memory[m_registerI + i] = m_registers[i];
-                }
-            }
-            else if (byteAtIndex(opcode, 3, 4) == 101) {
-                for(int i = 0; i <16; i++) {
-                    m_registers[i] = m_memory[m_registerI + i];
-                }
-            }
+            return;
         }
         break;
 
-        default:
-            break;
-        }
+    case 1:{
+        int jumpaddress = byteAtIndex(opcode, 2, 4);
+        m_progCounter = m_memory.begin() + (jumpaddress);
 
-        progCounter++;
+        return;
     }
+
+    case 2:{
+        m_callStack.push(m_progCounter + 2);
+
+        int calladdress = byteAtIndex(opcode, 2, 4);
+        m_progCounter = m_memory.begin() + (calladdress);
+
+        return;
+    }
+
+    case 3:
+        if (m_registers[byteAtIndex(opcode, 2)] == byteAtIndex(opcode, 3, 4)) {
+           m_progCounter++;
+        }
+        break;
+
+    case 4:
+        if (m_registers[byteAtIndex(opcode, 2)] != byteAtIndex(opcode, 3, 4)) {
+           m_progCounter++;
+        }
+        break;
+
+    case 5:
+        if (m_registers[byteAtIndex(opcode, 2)] == m_registers[byteAtIndex(opcode, 3)]) {
+           m_progCounter++;
+        }
+        break;
+
+    case 6:
+        m_registers[byteAtIndex(opcode, 2)] = byteAtIndex(opcode, 3, 4);
+        break;
+
+    case 7:
+        m_registers[byteAtIndex(opcode, 2)] += byteAtIndex(opcode, 3, 4);
+        break;
+
+    case 8:{
+        if (m_registers[byteAtIndex(opcode, 4)] == 0){
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 1){
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] | m_registers[byteAtIndex(opcode, 3)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 2){
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] & m_registers[byteAtIndex(opcode, 3)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 3){
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] ^ m_registers[byteAtIndex(opcode, 3)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 4){
+            m_registers[byteAtIndex(opcode, 2)] += m_registers[byteAtIndex(opcode, 3)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 5){
+            m_registers[byteAtIndex(opcode, 2)] -= m_registers[byteAtIndex(opcode, 3)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 6){
+            std::uint16_t leastbit = m_registers[byteAtIndex(opcode, 2)] << 15;
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] >> 1;
+
+            m_registers[15] = leastbit;
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 7){
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)] - m_registers[byteAtIndex(opcode, 2)];
+        }
+        else if (m_registers[byteAtIndex(opcode, 4)] == 14){
+            std::uint16_t mostsigbit = m_registers[byteAtIndex(opcode, 2)] >> 15;
+            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] << 1;
+
+            m_registers[15] = mostsigbit;
+        }
+        break;
+    }
+
+    case 9:
+        if(m_registers[byteAtIndex(opcode, 2)] != m_registers[byteAtIndex(opcode, 3)]) {
+            m_progCounter++;
+        }
+        break;
+
+    case 10:
+        m_registerI = byteAtIndex(opcode, 2, 4);
+        break;
+
+    case 11:{
+        int jumpaddress = byteAtIndex(opcode, 2, 4);
+        m_progCounter = m_memory.begin() + (jumpaddress + m_registers[0]);
+
+        return;
+    }
+
+    case 12:
+        m_registers[byteAtIndex(opcode, 2)] = (std::rand() % 255) & byteAtIndex(opcode, 3, 4);
+        break;
+
+    case 15:{
+        if (byteAtIndex(opcode, 4) == 0x0E) {
+            m_registerI += m_registers[byteAtIndex(opcode, 2)];
+        }
+        else if (byteAtIndex(opcode, 3, 4) == 85) {
+            for(int i = 0; i <16; i++) {
+                m_memory[m_registerI + i] = m_registers[i];
+            }
+        }
+        else if (byteAtIndex(opcode, 3, 4) == 101) {
+            for(int i = 0; i <16; i++) {
+                m_registers[i] = m_memory[m_registerI + i];
+            }
+        }
+    }
+    break;
+
+    default:
+        break;
+    }
+
+    m_progCounter++;
+
+    return;
 }
 
 std::vector<std::uint16_t>& Emulator::getRegisters() {
@@ -198,6 +203,10 @@ std::vector<std::uint16_t>& Emulator::getRegisters() {
 
 std::vector<std::uint8_t>& Emulator::getMemory() {
     return m_memory;
+}
+
+bool Emulator::isEnd() {
+    return m_endOfROM;
 }
 
 uint16_t byteAtIndex(std::uint16_t b, int i, int j) {

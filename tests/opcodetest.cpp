@@ -12,7 +12,10 @@ TEST(opcodetest, 6XNN) {
     rom.push_back(0x06FAA);
 
     chip8.loadROM(rom);
-    chip8.runROM();
+
+    while(!chip8.isEnd()){
+        chip8.runNextCycle();
+    }
 
     EXPECT_EQ(chip8.getRegisters()[0], 0);
     EXPECT_EQ(chip8.getRegisters()[1], 1);
