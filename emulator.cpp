@@ -62,6 +62,8 @@ void Emulator::runROM() {
                 progCounter = m_callStack.top();
 
                 m_callStack.pop();
+
+                continue;
             }
             break;
 
