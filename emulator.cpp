@@ -67,7 +67,7 @@ void Emulator::runROM() {
 
         case 1:{
             int jumpaddress = byteAtIndex(opcode, 2, 4);
-            progCounter = m_memory.begin() + (jumpaddress - 1);
+            progCounter = m_memory.begin() + (jumpaddress);
 
             continue;
         }
@@ -76,7 +76,7 @@ void Emulator::runROM() {
             m_callStack.push(progCounter + 2);
 
             int calladdress = byteAtIndex(opcode, 2, 4);
-            progCounter = m_memory.begin() + (calladdress - 1);
+            progCounter = m_memory.begin() + (calladdress);
 
             continue;
         }
