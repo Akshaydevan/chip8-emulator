@@ -1,0 +1,5 @@
+{
+    "name" : "chip8-emulator",
+    "version-string" : "0.0.1",
+    "dependencies" : ["sfml"]
+}
