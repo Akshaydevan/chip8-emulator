@@ -35,7 +35,25 @@ TEST(opcodetest, FX55) {
     rom.push_back(0x0F055);
 
     chip8.loadROM(rom);
-    chip8.runROM();
+
+    while(!chip8.isEnd()){
+        chip8.runNextCycle();
+    }
 
     EXPECT_EQ(chip8.getMemory()[1024], 10);
+}
+
+TEST(opcodetest, jump) {
+    Emulator chip8;
+    std::vector<uint16_t> rom;
+    rom.resize(5);
+
+    rom[0] = 0x01208;
+
+    chip8.loadROM(rom);
+
+    chip8.runNextCycle();
+    auto pc = chip8.getProgramCounter();
+
+    EXPECT_EQ(pc - chip8.getMemory().begin(), 520);
 }
