@@ -209,6 +209,10 @@ std::vector<std::uint8_t>::iterator Emulator::getProgramCounter() {
     return m_progCounter;
 }
 
+std::array<bool, 2048>& Emulator::getDisplayBuffer() {
+    return m_displayBuffer;
+}
+
 bool Emulator::isEnd() {
     return m_endOfROM;
 }

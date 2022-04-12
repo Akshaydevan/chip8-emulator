@@ -21,6 +21,7 @@ public:
     std::vector<std::uint16_t>& getRegisters();
     std::vector<std::uint8_t>& getMemory();
     std::vector<std::uint8_t>::iterator getProgramCounter();
+    std::array<bool, 2048>& getDisplayBuffer();
 
 private:
     std::vector<std::uint8_t> m_memory;
