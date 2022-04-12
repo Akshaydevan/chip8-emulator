@@ -8,7 +8,7 @@ public:
     Renderer() = default;
 
     void init();
-    void poll();
+    bool poll();
     void render(std::array<bool, 2048>&);
 
 private:

@@ -7,14 +7,17 @@ void Renderer::init(){
     m_window.clear(sf::Color::Black);
 }
 
-void Renderer::poll(){
+bool Renderer::poll(){
     sf::Event evt;
 
     while(m_window.pollEvent(evt)) {
         if (evt.type == sf::Event::Closed) {
             m_window.close();
+            return false;
         }
     }
+
+    return true;
 }
 
 void Renderer::render(std::array<bool, 2048>& displayBuffer) {
