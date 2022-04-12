@@ -205,6 +205,10 @@ std::vector<std::uint8_t>& Emulator::getMemory() {
     return m_memory;
 }
 
+std::vector<std::uint8_t>::iterator Emulator::getProgramCounter() {
+    return m_progCounter;
+}
+
 bool Emulator::isEnd() {
     return m_endOfROM;
 }
