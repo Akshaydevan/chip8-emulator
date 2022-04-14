@@ -16,7 +16,9 @@ int main() {
 
     while(!chip8.isEnd()){
         chip8.runNextCycle();
-        renderer.poll();
+
+        if (!renderer.poll())
+            break;
         renderer.render(chip8.getDisplayBuffer());
     }
 

@@ -163,6 +163,37 @@ void Emulator::runNextCycle() {
         m_registers[byteAtIndex(opcode, 2)] = (std::rand() % 255) & byteAtIndex(opcode, 3, 4);
         break;
 
+    case 13:{
+        int xpos = m_registers[byteAtIndex(opcode, 2)];
+        int ypos = m_registers[byteAtIndex(opcode, 3)];
+        int height = byteAtIndex(opcode, 4);
+
+        auto spriteaddr = m_registerI;
+
+        for (int i = 0; i < height; i++) {
+            int x = xpos;
+            for (int j = 1; j <= 8; j++) {
+                uint8_t byte = m_memory[spriteaddr];
+                uint8_t mask = 1 << (8 - j);
+
+                byte = byte & mask;
+
+                int bit = byte >> (8 - j);
+                int index = x++ + (ypos * 64);
+
+                //if anything is written beyond display buffer just ignore
+                if (index >= 2048)
+                    continue;
+
+                m_displayBuffer[index] = bit;
+            }
+
+            ypos++;
+            spriteaddr++;
+        }
+    }
+    break;
+
     case 15:{
         if (byteAtIndex(opcode, 4) == 0x0E) {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
@@ -181,6 +212,7 @@ void Emulator::runNextCycle() {
     break;
 
     default:
+        std::cerr << "unimplemented opcode\n";
         break;
     }
 
