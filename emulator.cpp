@@ -15,22 +15,11 @@ Emulator::Emulator()
 }
 
 bool Emulator::loadROM(std::string filename) {
-    std::ifstream file(filename, std::fstream::binary);
+    std::ifstream file(filename, std::ios_base::binary);
 
-    if (!file.is_open()) {
-        return false;
-    }
+    std::vector<uint8_t> buffer{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 
-    std::uint8_t higherbyte, lowerbyte;
-
-    for(int index = 512; file >> higherbyte; index++) {
-        file >> lowerbyte;
-
-        m_memory[index] = higherbyte;
-        m_memory[index + 1] = lowerbyte;
-
-        index += 2;
-    }
+    std::copy(buffer.begin(), buffer.end(), m_memory.begin() + 512);
 
     return true;
 }
