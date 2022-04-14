@@ -78,19 +78,22 @@ void Emulator::runNextCycle() {
 
     case 3:
         if (m_registers[byteAtIndex(opcode, 2)] == byteAtIndex(opcode, 3, 4)) {
-           m_progCounter++;
+           m_progCounter += 4;
+           return;
         }
         break;
 
     case 4:
         if (m_registers[byteAtIndex(opcode, 2)] != byteAtIndex(opcode, 3, 4)) {
-           m_progCounter++;
+           m_progCounter += 4;
+           return;
         }
         break;
 
     case 5:
         if (m_registers[byteAtIndex(opcode, 2)] == m_registers[byteAtIndex(opcode, 3)]) {
-           m_progCounter++;
+           m_progCounter += 4;
+           return;
         }
         break;
 
@@ -181,7 +184,7 @@ void Emulator::runNextCycle() {
         break;
     }
 
-    m_progCounter++;
+    m_progCounter += 2;
 
     return;
 }
