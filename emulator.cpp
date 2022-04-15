@@ -221,13 +221,28 @@ void Emulator::runNextCycle() {
         break;
 
     case 15:{
-        if (byteAtIndex(opcode, 4) == 0x0A) {
+        if (byteAtIndex(opcode, 4) == 7) {
+            auto end = std::chrono::high_resolution_clock::now();
+
+            int delay = (end - m_timer).count();
+            int timer = m_timerValue - (delay * 60);
+
+            if (timer < 0)
+                timer = 0;
+
+            m_registers[byteAtIndex(opcode, 2)] = timer;
+        }
+        else if (byteAtIndex(opcode, 4) == 0x0A) {
             int key = m_keyboardHandler.getKeyPress();
 
             if (key == -1)
                 return;
             else
                 m_registers[byteAtIndex(opcode, 2)] = key;
+        }
+        else if (byteAtIndex(opcode, 3, 4) == 21) {
+            m_timer = std::chrono::high_resolution_clock::now();
+            m_timerValue = m_registers[byteAtIndex(opcode, 2)];
         }
         else if (byteAtIndex(opcode, 4) == 0x0E) {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
