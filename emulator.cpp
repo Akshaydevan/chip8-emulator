@@ -58,8 +58,10 @@ void Emulator::runNextCycle() {
             std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
         }
         else if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0x0E) {
-            m_progCounter = m_callStack.top();
+            CallInfo info = m_callStack.top();
+            m_progCounter = info.returnAddress;
 
+            m_registers = info.registers;
             m_callStack.pop();
 
             return;
@@ -74,7 +76,9 @@ void Emulator::runNextCycle() {
     }
 
     case 2:{
-        m_callStack.push(m_progCounter + 2);
+        CallInfo info{m_progCounter+2, m_registers};
+
+        m_callStack.push(info);
 
         int calladdress = byteAtIndex(opcode, 2, 4);
         m_progCounter = m_memory.begin() + (calladdress);

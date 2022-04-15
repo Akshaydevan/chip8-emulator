@@ -8,6 +8,11 @@
 
 uint16_t byteAtIndex(std::uint16_t, int, int = 0);
 
+struct CallInfo{
+    std::vector<uint8_t>::iterator returnAddress;
+    std::vector<uint16_t> registers;
+};
+
 class Emulator
 {
 public:
@@ -28,7 +33,7 @@ public:
 
 private:
     std::vector<std::uint8_t> m_memory;
-    std::stack<std::vector<std::uint8_t>::iterator> m_callStack;
+    std::stack<CallInfo> m_callStack;
     std::vector<std::uint16_t> m_registers;
     std::uint16_t m_registerI;
     std::array<bool, 2048> m_displayBuffer;
