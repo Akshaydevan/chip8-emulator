@@ -4,6 +4,7 @@
 #include <ctime>
 
 Emulator::Emulator()
+    :m_keyboardHandler(KeyboardHandler::getInstance())
 {
     m_memory.resize(4096);
     m_registers.resize(16);
@@ -49,6 +50,8 @@ void Emulator::runNextCycle() {
     }
 
     std::uint16_t opcode = ((*m_progCounter) << 8) | *(m_progCounter + 1);
+
+//    std::cout << "opcode: " << byteAtIndex(opcode, 1) << std::endl;
 
     switch(byteAtIndex(opcode, 1)) {
     case 0:
@@ -199,8 +202,31 @@ void Emulator::runNextCycle() {
     }
     break;
 
+    case 14:
+        if (byteAtIndex(opcode, 3) == 9) {
+            if (m_keyboardHandler.getKeyPress() == m_registers[byteAtIndex(opcode, 2)]) {
+                m_progCounter += 4;
+                return;
+            }
+        }
+        else if (byteAtIndex(opcode, 3) == 0x0A) {
+            if (m_keyboardHandler.getKeyPress() != m_registers[byteAtIndex(opcode, 2)]) {
+                m_progCounter += 4;
+                return;
+            }
+        }
+        break;
+
     case 15:{
-        if (byteAtIndex(opcode, 4) == 0x0E) {
+        if (byteAtIndex(opcode, 4) == 0x0A) {
+            int key = m_keyboardHandler.getKeyPress();
+
+            if (key == -1)
+                return;
+            else
+                m_registers[byteAtIndex(opcode, 2)] = key;
+        }
+        else if (byteAtIndex(opcode, 4) == 0x0E) {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
         }
         else if (byteAtIndex(opcode, 3, 4) == 85) {
@@ -244,6 +270,10 @@ std::array<bool, 2048>& Emulator::getDisplayBuffer() {
 
 bool Emulator::isEnd() {
     return m_endOfROM;
+}
+
+void Emulator::setKeyboardHandler() {
+
 }
 
 uint16_t byteAtIndex(std::uint16_t b, int i, int j) {

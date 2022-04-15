@@ -2,10 +2,11 @@
 
 #include <array>
 #include <SFML/Graphics.hpp>
+#include "keyboardhandler.hpp"
 
 class Renderer {
 public:
-    Renderer() = default;
+    Renderer();
 
     void init();
     bool poll();
@@ -13,5 +14,6 @@ public:
 
 private:
     sf::RenderWindow m_window;
-    std::vector<sf::RectangleShape> m_list;
+    std::vector<sf::RectangleShape> m_boxes;
+    KeyboardHandler &m_keyboardHandler;
 };

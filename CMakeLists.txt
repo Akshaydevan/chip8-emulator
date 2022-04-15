@@ -13,10 +13,12 @@ add_executable(chip8-emulator
     emulator.cpp
     renderer.hpp
     renderer.cpp
+    keyboardhandler.hpp
+    keyboardhandler.cpp
 )
 
 target_link_libraries(chip8-emulator PRIVATE sfml-system sfml-graphics sfml-window)
-add_library(emulator STATIC emulator.hpp emulator.cpp)
+add_library(emulator STATIC emulator.hpp emulator.cpp keyboardhandler.hpp keyboardhandler.cpp)
 
 if(BUILD_TESTING)
     enable_testing()
