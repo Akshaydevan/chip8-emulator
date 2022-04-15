@@ -14,7 +14,7 @@ void Renderer::init(){
         box.setSize(sf::Vector2f(10, 10));
         box.setPosition(sf::Vector2f(xpos, ypos));
         box.setFillColor(sf::Color::White);
-        m_list.push_back(box);
+        m_boxes.push_back(box);
 
         xpos += 10;
         if (xpos >= 640) {
@@ -41,9 +41,11 @@ void Renderer::render(std::array<bool, 2048>& displayBuffer) {
     std::vector<sf::RectangleShape> boxes;
     int pos = 0;
 
+    m_window.clear();
+
     for (auto &i : displayBuffer) {
         if(i == true) {
-            m_window.draw(m_list[pos]);
+            m_window.draw(m_boxes[pos]);
         }
 
         pos++;

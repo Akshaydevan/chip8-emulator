@@ -17,6 +17,10 @@ Emulator::Emulator()
 bool Emulator::loadROM(std::string filename) {
     std::ifstream file(filename, std::ios_base::binary);
 
+    if (!file.is_open()) {
+        return false;
+    }
+
     std::vector<uint8_t> buffer{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 
     std::copy(buffer.begin(), buffer.end(), m_memory.begin() + 512);
@@ -144,7 +148,8 @@ void Emulator::runNextCycle() {
 
     case 9:
         if(m_registers[byteAtIndex(opcode, 2)] != m_registers[byteAtIndex(opcode, 3)]) {
-            m_progCounter++;
+            m_progCounter += 4;
+            return;
         }
         break;
 
