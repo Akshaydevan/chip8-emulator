@@ -51,7 +51,6 @@ void Emulator::runNextCycle() {
 
     std::uint16_t opcode = ((*m_progCounter) << 8) | *(m_progCounter + 1);
 
-//    std::cout << "opcode: " << byteAtIndex(opcode, 1) << std::endl;
 
     switch(byteAtIndex(opcode, 1)) {
     case 0:
@@ -113,34 +112,34 @@ void Emulator::runNextCycle() {
         break;
 
     case 8:{
-        if (m_registers[byteAtIndex(opcode, 4)] == 0){
+        if (byteAtIndex(opcode, 4) == 0){
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 1){
+        else if (byteAtIndex(opcode, 4) == 1){
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] | m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 2){
+        else if (byteAtIndex(opcode, 4) == 2){
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] & m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 3){
+        else if (byteAtIndex(opcode, 4) == 3){
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] ^ m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 4){
+        else if (byteAtIndex(opcode, 4) == 4){
             m_registers[byteAtIndex(opcode, 2)] += m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 5){
+        else if (byteAtIndex(opcode, 4) == 5){
             m_registers[byteAtIndex(opcode, 2)] -= m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 6){
-            std::uint16_t leastbit = m_registers[byteAtIndex(opcode, 2)] << 15;
+        else if (byteAtIndex(opcode, 4) == 6){
+            std::uint16_t leastbit = m_registers[byteAtIndex(opcode, 2)] & 1;
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] >> 1;
 
             m_registers[15] = leastbit;
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 7){
+        else if (byteAtIndex(opcode, 4) == 7){
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)] - m_registers[byteAtIndex(opcode, 2)];
         }
-        else if (m_registers[byteAtIndex(opcode, 4)] == 14){
+        else if (byteAtIndex(opcode, 4) == 14){
             std::uint16_t mostsigbit = m_registers[byteAtIndex(opcode, 2)] >> 15;
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] << 1;
 
@@ -180,17 +179,17 @@ void Emulator::runNextCycle() {
 
         for (int i = 0; i < height; i++) {
             int x = xpos;
-            for (int j = 1; j <= 8; j++) {
+            for (int j = 1; j <= 8; j++, x++) {
                 uint8_t byte = m_memory[spriteaddr];
                 uint8_t mask = 1 << (8 - j);
 
                 byte = byte & mask;
 
                 int bit = byte >> (8 - j);
-                int index = x++ + (ypos * 64);
+                int index = x + (ypos * 64);
 
                 //if anything is written beyond display buffer just ignore
-                if (index >= 2048)
+                if (x >= 64 || ypos >= 32)
                     continue;
 
                 m_displayBuffer[index] = bit;

@@ -117,7 +117,7 @@ void Renderer::render(std::array<bool, 2048>& displayBuffer) {
     std::vector<sf::RectangleShape> boxes;
     int pos = 0;
 
-    m_window.clear();
+    m_window.clear(sf::Color::Black);
 
     for (auto &i : displayBuffer) {
         if(i == true) {
