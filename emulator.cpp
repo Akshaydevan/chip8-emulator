@@ -88,22 +88,21 @@ void Emulator::runNextCycle() {
 
     case 3:
         if (m_registers[byteAtIndex(opcode, 2)] == byteAtIndex(opcode, 3, 4)) {
-           m_progCounter += 4;
-           return;
+            m_progCounter += 4;
+            return;
         }
         break;
-
     case 4:
         if (m_registers[byteAtIndex(opcode, 2)] != byteAtIndex(opcode, 3, 4)) {
-           m_progCounter += 4;
-           return;
+            m_progCounter += 4;
+            return;
         }
         break;
 
     case 5:
         if (m_registers[byteAtIndex(opcode, 2)] == m_registers[byteAtIndex(opcode, 3)]) {
-           m_progCounter += 4;
-           return;
+            m_progCounter += 4;
+            return;
         }
         break;
 
@@ -128,11 +127,31 @@ void Emulator::runNextCycle() {
         else if (byteAtIndex(opcode, 4) == 3){
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] ^ m_registers[byteAtIndex(opcode, 3)];
         }
-        else if (byteAtIndex(opcode, 4) == 4){
-            m_registers[byteAtIndex(opcode, 2)] += m_registers[byteAtIndex(opcode, 3)];
+        else if (byteAtIndex(opcode, 4) == 4){            
+            uint8_t vx = m_registers[byteAtIndex(opcode, 2)];
+            uint8_t vy = m_registers[byteAtIndex(opcode, 3)];
+            uint8_t result = vx + vy;
+
+            //checking for overflow
+            if (result < (int)vx + (int)vy)
+                m_registers[15] = 1;
+            else
+                m_registers[15] = 0;
+
+            m_registers[byteAtIndex(opcode, 2)] = result;
         }
         else if (byteAtIndex(opcode, 4) == 5){
-            m_registers[byteAtIndex(opcode, 2)] -= m_registers[byteAtIndex(opcode, 3)];
+            uint8_t vx = m_registers[byteAtIndex(opcode, 2)];
+            uint8_t vy = m_registers[byteAtIndex(opcode, 3)];
+            uint8_t result = vx - vy;
+
+            //checking for overflow
+            if (result > (int)vx - (int)vy)
+                m_registers[15] = 0;
+            else
+                m_registers[15] = 1;
+
+            m_registers[byteAtIndex(opcode, 2)] = result;
         }
         else if (byteAtIndex(opcode, 4) == 6){
             std::uint16_t leastbit = m_registers[byteAtIndex(opcode, 2)] & 1;
@@ -141,7 +160,17 @@ void Emulator::runNextCycle() {
             m_registers[15] = leastbit;
         }
         else if (byteAtIndex(opcode, 4) == 7){
-            m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)] - m_registers[byteAtIndex(opcode, 2)];
+            uint8_t vx = m_registers[byteAtIndex(opcode, 2)];
+            uint8_t vy = m_registers[byteAtIndex(opcode, 3)];
+            uint8_t result = vy - vx;
+
+            //checking for overflow
+            if (result < (int)vx - (int)vy)
+                m_registers[15] = 0;
+            else
+                m_registers[15] = 1;
+
+            m_registers[byteAtIndex(opcode, 2)] = result;
         }
         else if (byteAtIndex(opcode, 4) == 14){
             std::uint16_t mostsigbit = m_registers[byteAtIndex(opcode, 2)] >> 15;
@@ -181,6 +210,8 @@ void Emulator::runNextCycle() {
 
         auto spriteaddr = m_registerI;
 
+        m_registers[15] = 0;
+
         for (int i = 0; i < height; i++) {
             int x = xpos;
             for (int j = 1; j <= 8; j++, x++) {
@@ -195,6 +226,9 @@ void Emulator::runNextCycle() {
                 //if anything is written beyond display buffer just ignore
                 if (x >= 64 || ypos >= 32)
                     continue;
+
+                if (m_displayBuffer[index] == 1 && bit == 1)
+                    m_registers[15] = 1;
 
                 m_displayBuffer[index] = m_displayBuffer[index] ^ bit;
             }
