@@ -281,6 +281,23 @@ TEST(opcodetest, 8XY6) {
     EXPECT_EQ(chip8.getRegisters()[15], 1);
 }
 
+TEST(opcodetest, 8XY7) {
+    Emulator chip8;
+    std::vector<uint16_t> rom;
+
+    rom.resize(20);
+    rom[0] = 0x06001; //store 1 in VO
+    rom[1] = 0x0610A; //store 10 in V1
+    rom[2] = 0x08017; //store V0 = V1 - v0
+    chip8.loadROM(rom);
+
+    chip8.runNextCycle();
+    chip8.runNextCycle();
+    chip8.runNextCycle();
+
+    EXPECT_EQ(chip8.getRegisters()[0], 9);
+}
+
 TEST(opcodetest, FX55) {
     Emulator chip8;
     std::vector<uint16_t> rom;
@@ -298,4 +315,25 @@ TEST(opcodetest, FX55) {
     }
 
     EXPECT_EQ(chip8.getMemory()[1024], 10);
+}
+
+TEST(opcodetest, collision) {
+    Emulator chip8;
+    std::vector<uint16_t> rom;
+
+    rom.resize(20);
+    rom[0] = 0x0A208; //set I to 520
+    rom[1] = 0x0D001; //draw 1 pixel at 0,0
+    rom[2] = 0x0D001; //draw 1 pixel at 0,0
+    rom[4] = 0x08000; //single pixel sprite at 520
+    chip8.loadROM(rom);
+
+    chip8.runNextCycle();
+    chip8.runNextCycle();
+
+    EXPECT_EQ(chip8.getRegisters()[15], 0);
+
+    chip8.runNextCycle();
+
+    EXPECT_EQ(chip8.getRegisters()[15], 1);
 }
