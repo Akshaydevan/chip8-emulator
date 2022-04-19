@@ -304,7 +304,7 @@ void Emulator::runNextCycle() {
     return;
 }
 
-std::vector<std::uint16_t>& Emulator::getRegisters() {
+std::vector<std::uint8_t>& Emulator::getRegisters() {
     return m_registers;
 }
 
