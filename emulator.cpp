@@ -196,7 +196,7 @@ void Emulator::runNextCycle() {
                 if (x >= 64 || ypos >= 32)
                     continue;
 
-                m_displayBuffer[index] = bit;
+                m_displayBuffer[index] = m_displayBuffer[index] ^ bit;
             }
 
             ypos++;
