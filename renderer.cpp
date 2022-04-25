@@ -11,6 +11,7 @@ void Renderer::init(){
     m_window.create(sf::VideoMode(640,330), "chip8");
     m_window.clear(sf::Color::Black);
 
+    m_window.setFramerateLimit(500);
     int xpos = 0;
     int ypos = 0;
 
