@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    if(!chip8.loadROM("maze.ch8")) {
+    if(!chip8.loadROM(rom)) {
         std::cerr << "cannot open rom\n" << std::endl;
         return -1;
     }
