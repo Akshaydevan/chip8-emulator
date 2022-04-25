@@ -1,10 +1,8 @@
 # Chip 8 Emulator 
----
 A basic chip 8 emulator written in c++ 
 #
 #
 ## How to run
----
 Give to path to the rom you want to run as the argument to the binary file
 ```
   ./chip8-emulator.exe path_to_rom
@@ -12,7 +10,6 @@ Give to path to the rom you want to run as the argument to the binary file
 #
 #
 ## BUILD
----
 This project uses vcpkg to install dependencies
 ```
 cd build
