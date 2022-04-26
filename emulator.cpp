@@ -310,12 +310,16 @@ void Emulator::runNextCycle() {
             m_memory[m_registerI + 2] = unit;
         }
         else if (byteAtIndex(opcode, 3, 4) == 85) {
-            for(int i = 0; i <16; i++) {
+            int limit = byteAtIndex(opcode, 2);
+
+            for(int i = 0; i <= limit; i++) {
                 m_memory[m_registerI + i] = m_registers[i];
             }
         }
         else if (byteAtIndex(opcode, 3, 4) == 101) {
-            for(int i = 0; i <16; i++) {
+            int limit = byteAtIndex(opcode, 2);
+
+            for(int i = 0; i <= limit; i++) {
                 m_registers[i] = m_memory[m_registerI + i];
             }
         }
