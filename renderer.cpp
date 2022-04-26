@@ -42,19 +42,19 @@ bool Renderer::poll(){
         if (evt.type == sf::Event::KeyPressed) {
             switch(evt.key.code) {
             case sf::Keyboard::Num1:
-                m_keyboardHandler.setKeyPress(0);
-                break;
-
-            case sf::Keyboard::Num2:
                 m_keyboardHandler.setKeyPress(1);
                 break;
 
-            case sf::Keyboard::Num3:
+            case sf::Keyboard::Num2:
                 m_keyboardHandler.setKeyPress(2);
                 break;
 
-            case sf::Keyboard::Num4:
+            case sf::Keyboard::Num3:
                 m_keyboardHandler.setKeyPress(3);
+                break;
+
+            case sf::Keyboard::Num4:
+                m_keyboardHandler.setKeyPress(12);
                 break;
 
             case sf::Keyboard::Q:
@@ -70,35 +70,35 @@ bool Renderer::poll(){
                 break;
 
             case sf::Keyboard::R:
-                m_keyboardHandler.setKeyPress(7);
-                break;
-
-            case sf::Keyboard::A:
-                m_keyboardHandler.setKeyPress(8);
-                break;
-
-            case sf::Keyboard::S:
-                m_keyboardHandler.setKeyPress(9);
-                break;
-
-            case sf::Keyboard::D:
-                m_keyboardHandler.setKeyPress(10);
-                break;
-
-            case sf::Keyboard::F:
-                m_keyboardHandler.setKeyPress(11);
-                break;
-
-            case sf::Keyboard::Z:
-                m_keyboardHandler.setKeyPress(12);
-                break;
-
-            case sf::Keyboard::X:
                 m_keyboardHandler.setKeyPress(13);
                 break;
 
-            case sf::Keyboard::C:
+            case sf::Keyboard::A:
+                m_keyboardHandler.setKeyPress(7);
+                break;
+
+            case sf::Keyboard::S:
+                m_keyboardHandler.setKeyPress(8);
+                break;
+
+            case sf::Keyboard::D:
+                m_keyboardHandler.setKeyPress(9);
+                break;
+
+            case sf::Keyboard::F:
                 m_keyboardHandler.setKeyPress(14);
+                break;
+
+            case sf::Keyboard::Z:
+                m_keyboardHandler.setKeyPress(10);
+                break;
+
+            case sf::Keyboard::X:
+                m_keyboardHandler.setKeyPress(0);
+                break;
+
+            case sf::Keyboard::C:
+                m_keyboardHandler.setKeyPress(11);
                 break;
 
             case sf::Keyboard::V:
