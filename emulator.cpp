@@ -12,7 +12,9 @@ Emulator::Emulator()
     m_progCounter = m_memory.begin() + 512;
     m_endOfROM = false;
 
-    std::srand(std::time(nullptr));
+    loadFontData();
+
+    std::srand(std::time(nullptr)); 
 }
 
 bool Emulator::loadROM(std::string filename) {
@@ -281,6 +283,22 @@ void Emulator::runNextCycle() {
         else if (byteAtIndex(opcode, 4) == 0x0E) {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
         }
+        else if (byteAtIndex(opcode, 3, 4) == 0x029) {
+            int index = byteAtIndex(opcode, 2);
+            int score = m_registers[byteAtIndex(opcode, 2)];
+            m_registerI = m_registers[byteAtIndex(opcode, 2)] * 5;
+        }
+        else if (byteAtIndex(opcode, 3, 4) == 0x033) {
+            int num = m_registers[byteAtIndex(opcode, 2)];
+
+            int hundredth = std::floor(num / 100);
+            int tenth = std::floor(num / 10) - (hundredth * 10);
+            int unit = num - (hundredth * 100) - (tenth * 10);
+
+            m_memory[m_registerI] = hundredth;
+            m_memory[m_registerI + 1] = tenth;
+            m_memory[m_registerI + 2] = unit;
+        }
         else if (byteAtIndex(opcode, 3, 4) == 85) {
             for(int i = 0; i <16; i++) {
                 m_memory[m_registerI + i] = m_registers[i];
@@ -318,6 +336,33 @@ std::vector<std::uint8_t>::iterator Emulator::getProgramCounter() {
 
 std::array<bool, 2048>& Emulator::getDisplayBuffer() {
     return m_displayBuffer;
+}
+
+void Emulator::loadFontData()
+{
+    std::vector<uint8_t> fontdata{0xF0,0x90,0x90,0x90,0xF0,     //0
+                                  0x20,0x60,0x20,0x20,0x70,     //1
+                                  0xF0,0x10,0xF0,0x80,0xF0,     //2
+                                  0xF0,0x10,0xF0,0x10,0xF0,     //3
+                                  0x90,0x90,0xF0,0x10,0x10,     //4
+                                  0xF0,0x80,0xF0,0x10,0xF0,     //5
+                                  0xF0,0x80,0xF0,0x90,0xF0,     //6
+                                  0xF0,0x10,0x20,0x40,0x40,     //7
+                                  0xF0,0x90,0xF0,0x90,0xF0,     //8
+                                  0xF0,0x90,0xF0,0x10,0xF0,     //9
+                                  0xF0,0x90,0xF0,0x90,0x90,     //A
+                                  0xE0,0x90,0xE0,0x90,0xE0,     //B
+                                  0xF0,0x80,0x80,0x80,0xF0,     //C
+                                  0xE0,0x90,0x90,0x90,0xE0,     //D
+                                  0xF0,0x80,0xF0,0x80,0xF0,     //E
+                                  0xF0,0x80,0xF0,0x80,0x80      //F
+                                };
+
+    int index = 0;
+
+    for (const auto &i : fontdata) {
+        m_memory[index++] = i;
+    }
 }
 
 bool Emulator::isEnd() {
