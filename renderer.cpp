@@ -41,35 +41,35 @@ bool Renderer::poll(){
 
         if (evt.type == sf::Event::KeyPressed) {
             switch(evt.key.code) {
-            case sf::Keyboard::Q:
+            case sf::Keyboard::Num1:
                 m_keyboardHandler.setKeyPress(0);
                 break;
 
-            case sf::Keyboard::Down:
+            case sf::Keyboard::Num2:
                 m_keyboardHandler.setKeyPress(1);
                 break;
 
-            case sf::Keyboard::W:
+            case sf::Keyboard::Num3:
                 m_keyboardHandler.setKeyPress(2);
                 break;
 
-            case sf::Keyboard::Left:
+            case sf::Keyboard::Num4:
                 m_keyboardHandler.setKeyPress(3);
                 break;
 
-            case sf::Keyboard::E:
+            case sf::Keyboard::Q:
                 m_keyboardHandler.setKeyPress(4);
                 break;
 
-            case sf::Keyboard::Right:
+            case sf::Keyboard::W:
                 m_keyboardHandler.setKeyPress(5);
                 break;
 
-            case sf::Keyboard::R:
+            case sf::Keyboard::E:
                 m_keyboardHandler.setKeyPress(6);
                 break;
 
-            case sf::Keyboard::Up:
+            case sf::Keyboard::R:
                 m_keyboardHandler.setKeyPress(7);
                 break;
 
