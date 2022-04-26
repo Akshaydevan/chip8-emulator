@@ -214,8 +214,20 @@ void Emulator::runNextCycle() {
 
         m_registers[15] = 0;
 
+        // if sprite is drawn outside of screen
+        // wrap around to the opposite side
+        if (xpos >= 64) {
+            xpos = xpos % 64;
+        }
+
+        if (ypos >= 32) {
+            ypos = ypos % 32;
+        }
+
         for (int i = 0; i < height; i++) {
             int x = xpos;
+            int y = ypos;
+
             for (int j = 1; j <= 8; j++, x++) {
                 uint8_t byte = m_memory[spriteaddr];
                 uint8_t mask = 1 << (8 - j);
@@ -223,7 +235,7 @@ void Emulator::runNextCycle() {
                 byte = byte & mask;
 
                 int bit = byte >> (8 - j);
-                int index = x + (ypos * 64);
+                int index = x + (y * 64);
 
                 //if anything is written beyond display buffer just ignore
                 if (x >= 64 || ypos >= 32)
@@ -284,8 +296,6 @@ void Emulator::runNextCycle() {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
         }
         else if (byteAtIndex(opcode, 3, 4) == 0x029) {
-            int index = byteAtIndex(opcode, 2);
-            int score = m_registers[byteAtIndex(opcode, 2)];
             m_registerI = m_registers[byteAtIndex(opcode, 2)] * 5;
         }
         else if (byteAtIndex(opcode, 3, 4) == 0x033) {
