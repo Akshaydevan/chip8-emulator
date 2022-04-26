@@ -1,8 +1,8 @@
 #pragma once
 
-#include <array>
-#include <SFML/Graphics.hpp>
 #include "keyboardhandler.hpp"
+#include <SFML/Graphics.hpp>
+#include <array>
 
 class Renderer {
 public:
@@ -15,5 +15,5 @@ public:
 private:
     sf::RenderWindow m_window;
     std::vector<sf::RectangleShape> m_boxes;
-    KeyboardHandler &m_keyboardHandler;
+    KeyboardHandler& m_keyboardHandler;
 };

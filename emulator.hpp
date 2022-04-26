@@ -1,21 +1,20 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <array>
-#include <stack>
-#include <chrono>
 #include "keyboardhandler.hpp"
+#include <array>
+#include <chrono>
+#include <iostream>
+#include <stack>
+#include <vector>
 
 uint16_t byteAtIndex(std::uint16_t, int, int = 0);
 
-class Emulator
-{
+class Emulator {
 public:
     Emulator();
 
     bool loadROM(std::string);
-    void loadROM(std::vector<std::uint16_t> &);
+    void loadROM(std::vector<std::uint16_t>&);
     void runNextCycle();
 
     bool isEnd();
@@ -37,7 +36,6 @@ private:
     std::vector<std::uint8_t>::iterator m_progCounter;
     int m_timerValue;
     std::chrono::high_resolution_clock::time_point m_timer;
-    KeyboardHandler &m_keyboardHandler;
+    KeyboardHandler& m_keyboardHandler;
     bool m_endOfROM;
 };
-

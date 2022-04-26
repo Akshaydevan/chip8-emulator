@@ -1,21 +1,21 @@
-#include <SFML/Graphics.hpp>
 #include "renderer.hpp"
+#include <SFML/Graphics.hpp>
 
 Renderer::Renderer()
     : m_keyboardHandler(KeyboardHandler::getInstance())
 {
-
 }
 
-void Renderer::init(){
-    m_window.create(sf::VideoMode(640,330), "chip8");
+void Renderer::init()
+{
+    m_window.create(sf::VideoMode(640, 330), "chip8");
     m_window.clear(sf::Color::Black);
 
     m_window.setFramerateLimit(500);
     int xpos = 0;
     int ypos = 0;
 
-    for(int i = 0; i < 2048; i++) {
+    for (int i = 0; i < 2048; i++) {
         sf::RectangleShape box;
         box.setSize(sf::Vector2f(10, 10));
         box.setPosition(sf::Vector2f(xpos, ypos));
@@ -30,17 +30,18 @@ void Renderer::init(){
     }
 }
 
-bool Renderer::poll(){
+bool Renderer::poll()
+{
     sf::Event evt;
 
-    while(m_window.pollEvent(evt)) {
+    while (m_window.pollEvent(evt)) {
         if (evt.type == sf::Event::Closed) {
             m_window.close();
             return false;
         }
 
         if (evt.type == sf::Event::KeyPressed) {
-            switch(evt.key.code) {
+            switch (evt.key.code) {
             case sf::Keyboard::Num1:
                 m_keyboardHandler.setKeyPress(1);
                 break;
@@ -114,14 +115,15 @@ bool Renderer::poll(){
     return true;
 }
 
-void Renderer::render(std::array<bool, 2048>& displayBuffer) {
+void Renderer::render(std::array<bool, 2048>& displayBuffer)
+{
     std::vector<sf::RectangleShape> boxes;
     int pos = 0;
 
     m_window.clear(sf::Color::Black);
 
-    for (auto &i : displayBuffer) {
-        if(i == true) {
+    for (auto& i : displayBuffer) {
+        if (i == true) {
             m_window.draw(m_boxes[pos]);
         }
 
