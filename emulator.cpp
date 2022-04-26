@@ -324,9 +324,6 @@ bool Emulator::isEnd() {
     return m_endOfROM;
 }
 
-void Emulator::setKeyboardHandler() {
-
-}
 
 uint16_t byteAtIndex(std::uint16_t b, int i, int j) {
     std::uint16_t mask = 0;

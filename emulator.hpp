@@ -30,7 +30,6 @@ public:
     std::vector<std::uint8_t>::iterator getProgramCounter();
     std::array<bool, 2048>& getDisplayBuffer();
 
-    void setKeyboardHandler();
 
 private:
     std::vector<std::uint8_t> m_memory;
