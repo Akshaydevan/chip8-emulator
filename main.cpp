@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
     while (!chip8.isEnd()) {
         chip8.runNextCycle();
 
-
         if (!renderer.poll())
             break;
 

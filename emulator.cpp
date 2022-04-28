@@ -63,6 +63,7 @@ void Emulator::runNextCycle()
         if (byteAtIndex(opcode, 3, 4) == 0x0E0) {
             std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
             m_drawScreen = true;
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x0EE) {
             m_progCounter = m_callStack.top();
 
@@ -120,12 +121,16 @@ void Emulator::runNextCycle()
     case 8: {
         if (byteAtIndex(opcode, 4) == 0) {
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 3)];
+
         } else if (byteAtIndex(opcode, 4) == 1) {
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] | m_registers[byteAtIndex(opcode, 3)];
+
         } else if (byteAtIndex(opcode, 4) == 2) {
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] & m_registers[byteAtIndex(opcode, 3)];
+
         } else if (byteAtIndex(opcode, 4) == 3) {
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] ^ m_registers[byteAtIndex(opcode, 3)];
+
         } else if (byteAtIndex(opcode, 4) == 4) {
             uint8_t vx = m_registers[byteAtIndex(opcode, 2)];
             uint8_t vy = m_registers[byteAtIndex(opcode, 3)];
@@ -138,6 +143,7 @@ void Emulator::runNextCycle()
                 m_registers[15] = 0;
 
             m_registers[byteAtIndex(opcode, 2)] = result;
+
         } else if (byteAtIndex(opcode, 4) == 5) {
             uint8_t vx = m_registers[byteAtIndex(opcode, 2)];
             uint8_t vy = m_registers[byteAtIndex(opcode, 3)];
@@ -150,11 +156,13 @@ void Emulator::runNextCycle()
                 m_registers[15] = 1;
 
             m_registers[byteAtIndex(opcode, 2)] = result;
+
         } else if (byteAtIndex(opcode, 4) == 6) {
             std::uint16_t leastbit = m_registers[byteAtIndex(opcode, 2)] & 1;
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] >> 1;
 
             m_registers[15] = leastbit;
+
         } else if (byteAtIndex(opcode, 4) == 7) {
             uint8_t vx = m_registers[byteAtIndex(opcode, 2)];
             uint8_t vy = m_registers[byteAtIndex(opcode, 3)];
@@ -167,6 +175,7 @@ void Emulator::runNextCycle()
                 m_registers[15] = 1;
 
             m_registers[byteAtIndex(opcode, 2)] = result;
+
         } else if (byteAtIndex(opcode, 4) == 0x00E) {
             std::uint16_t mostsigbit = m_registers[byteAtIndex(opcode, 2)] >> 15;
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] << 1;
@@ -245,8 +254,7 @@ void Emulator::runNextCycle()
         }
 
         m_drawScreen = true;
-    }
-    break;
+    } break;
 
     case 14:
         if (byteAtIndex(opcode, 3, 4) == 0x09E) {
@@ -254,6 +262,7 @@ void Emulator::runNextCycle()
                 m_progCounter += 4;
                 return;
             }
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x0A1) {
             if (m_keyboardHandler.getKeyPress() != m_registers[byteAtIndex(opcode, 2)]) {
                 m_progCounter += 4;
@@ -272,12 +281,13 @@ void Emulator::runNextCycle()
             int delay = endtime - starttime;
             int timer = m_timerValue - (delay * 60);
 
-            if (timer <= 0){
+            if (timer <= 0) {
                 timer = 0;
                 m_timerValue = 0;
             }
 
             m_registers[byteAtIndex(opcode, 2)] = timer;
+
         } else if (byteAtIndex(opcode, 4) == 0x0A) {
             int key = m_keyboardHandler.getKeyPress();
 
@@ -285,13 +295,17 @@ void Emulator::runNextCycle()
                 return;
             else
                 m_registers[byteAtIndex(opcode, 2)] = key;
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x015) {
             m_timer = std::chrono::high_resolution_clock::now();
             m_timerValue = m_registers[byteAtIndex(opcode, 2)];
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x01E) {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x029) {
             m_registerI = m_registers[byteAtIndex(opcode, 2)] * 5;
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x033) {
             int num = m_registers[byteAtIndex(opcode, 2)];
 
@@ -302,12 +316,14 @@ void Emulator::runNextCycle()
             m_memory[m_registerI] = hundredth;
             m_memory[m_registerI + 1] = tenth;
             m_memory[m_registerI + 2] = unit;
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x055) {
             int limit = byteAtIndex(opcode, 2);
 
             for (int i = 0; i <= limit; i++) {
                 m_memory[m_registerI + i] = m_registers[i];
             }
+
         } else if (byteAtIndex(opcode, 3, 4) == 0x065) {
             int limit = byteAtIndex(opcode, 2);
 
