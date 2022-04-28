@@ -60,7 +60,7 @@ void Emulator::runNextCycle()
 
     switch (byteAtIndex(opcode, 1)) {
     case 0:
-        if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0) {
+        if (byteAtIndex(opcode, 3, 4) == 0x0E0) {
             std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
             m_drawScreen = true;
         } else if (byteAtIndex(opcode, 3, 4) == 0x0EE) {
@@ -167,7 +167,7 @@ void Emulator::runNextCycle()
                 m_registers[15] = 1;
 
             m_registers[byteAtIndex(opcode, 2)] = result;
-        } else if (byteAtIndex(opcode, 4) == 14) {
+        } else if (byteAtIndex(opcode, 4) == 0x00E) {
             std::uint16_t mostsigbit = m_registers[byteAtIndex(opcode, 2)] >> 15;
             m_registers[byteAtIndex(opcode, 2)] = m_registers[byteAtIndex(opcode, 2)] << 1;
 
@@ -249,12 +249,12 @@ void Emulator::runNextCycle()
     break;
 
     case 14:
-        if (byteAtIndex(opcode, 3) == 9) {
+        if (byteAtIndex(opcode, 3, 4) == 0x09E) {
             if (m_keyboardHandler.getKeyPress() == m_registers[byteAtIndex(opcode, 2)]) {
                 m_progCounter += 4;
                 return;
             }
-        } else if (byteAtIndex(opcode, 3) == 0x0A) {
+        } else if (byteAtIndex(opcode, 3, 4) == 0x0A1) {
             if (m_keyboardHandler.getKeyPress() != m_registers[byteAtIndex(opcode, 2)]) {
                 m_progCounter += 4;
                 return;
@@ -263,7 +263,7 @@ void Emulator::runNextCycle()
         break;
 
     case 15: {
-        if (byteAtIndex(opcode, 4) == 7) {
+        if (byteAtIndex(opcode, 3, 4) == 0x007) {
             auto end = std::chrono::high_resolution_clock::now();
 
             int starttime = std::chrono::time_point_cast<std::chrono::seconds>(m_timer).time_since_epoch().count();
@@ -285,10 +285,10 @@ void Emulator::runNextCycle()
                 return;
             else
                 m_registers[byteAtIndex(opcode, 2)] = key;
-        } else if (byteAtIndex(opcode, 3, 4) == 21) {
+        } else if (byteAtIndex(opcode, 3, 4) == 0x015) {
             m_timer = std::chrono::high_resolution_clock::now();
             m_timerValue = m_registers[byteAtIndex(opcode, 2)];
-        } else if (byteAtIndex(opcode, 4) == 0x0E) {
+        } else if (byteAtIndex(opcode, 3, 4) == 0x01E) {
             m_registerI += m_registers[byteAtIndex(opcode, 2)];
         } else if (byteAtIndex(opcode, 3, 4) == 0x029) {
             m_registerI = m_registers[byteAtIndex(opcode, 2)] * 5;
@@ -302,13 +302,13 @@ void Emulator::runNextCycle()
             m_memory[m_registerI] = hundredth;
             m_memory[m_registerI + 1] = tenth;
             m_memory[m_registerI + 2] = unit;
-        } else if (byteAtIndex(opcode, 3, 4) == 85) {
+        } else if (byteAtIndex(opcode, 3, 4) == 0x055) {
             int limit = byteAtIndex(opcode, 2);
 
             for (int i = 0; i <= limit; i++) {
                 m_memory[m_registerI + i] = m_registers[i];
             }
-        } else if (byteAtIndex(opcode, 3, 4) == 101) {
+        } else if (byteAtIndex(opcode, 3, 4) == 0x065) {
             int limit = byteAtIndex(opcode, 2);
 
             for (int i = 0; i <= limit; i++) {
