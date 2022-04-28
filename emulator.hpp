@@ -18,6 +18,7 @@ public:
     void runNextCycle();
 
     bool isEnd();
+    bool shouldDraw();
 
     std::vector<std::uint8_t>& getRegisters();
     std::vector<std::uint8_t>& getMemory();
@@ -38,4 +39,5 @@ private:
     std::chrono::high_resolution_clock::time_point m_timer;
     KeyboardHandler& m_keyboardHandler;
     bool m_endOfROM;
+    bool m_drawScreen;
 };

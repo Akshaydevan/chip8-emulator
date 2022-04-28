@@ -24,17 +24,15 @@ int main(int argc, char* argv[])
     }
 
     renderer.init();
-    int frame = 0;
-
     while (!chip8.isEnd()) {
         chip8.runNextCycle();
+
 
         if (!renderer.poll())
             break;
 
-        renderer.render(chip8.getDisplayBuffer());
-
-        frame++;
+        if (chip8.shouldDraw())
+            renderer.render(chip8.getDisplayBuffer());
     }
 
     return 0;

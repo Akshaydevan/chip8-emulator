@@ -54,18 +54,22 @@ void Emulator::runNextCycle()
         return;
     }
 
+    m_drawScreen = false;
+
     std::uint16_t opcode = ((*m_progCounter) << 8) | *(m_progCounter + 1);
 
     switch (byteAtIndex(opcode, 1)) {
     case 0:
         if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0) {
             std::fill(m_displayBuffer.begin(), m_displayBuffer.end(), 0);
-        } else if (byteAtIndex(opcode, 3) == 0x0E && byteAtIndex(opcode, 4) == 0x0E) {
+            m_drawScreen = true;
+        } else if (byteAtIndex(opcode, 3, 4) == 0x0EE) {
             m_progCounter = m_callStack.top();
 
             m_callStack.pop();
             return;
         }
+
         break;
 
     case 1: {
@@ -311,7 +315,6 @@ void Emulator::runNextCycle()
     }
 
     m_progCounter += 2;
-
     return;
 }
 
@@ -366,6 +369,11 @@ void Emulator::loadFontData()
 bool Emulator::isEnd()
 {
     return m_endOfROM;
+}
+
+bool Emulator::shouldDraw()
+{
+    return m_drawScreen;
 }
 
 uint16_t byteAtIndex(std::uint16_t b, int i, int j)
