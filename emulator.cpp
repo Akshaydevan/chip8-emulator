@@ -243,7 +243,10 @@ void Emulator::runNextCycle()
             ypos++;
             spriteaddr++;
         }
-    } break;
+
+        m_drawScreen = true;
+    }
+    break;
 
     case 14:
         if (byteAtIndex(opcode, 3) == 9) {
@@ -263,11 +266,16 @@ void Emulator::runNextCycle()
         if (byteAtIndex(opcode, 4) == 7) {
             auto end = std::chrono::high_resolution_clock::now();
 
-            int delay = (end - m_timer).count();
+            int starttime = std::chrono::time_point_cast<std::chrono::seconds>(m_timer).time_since_epoch().count();
+            int endtime = std::chrono::time_point_cast<std::chrono::seconds>(end).time_since_epoch().count();
+
+            int delay = endtime - starttime;
             int timer = m_timerValue - (delay * 60);
 
-            if (timer < 0)
+            if (timer <= 0){
                 timer = 0;
+                m_timerValue = 0;
+            }
 
             m_registers[byteAtIndex(opcode, 2)] = timer;
         } else if (byteAtIndex(opcode, 4) == 0x0A) {
