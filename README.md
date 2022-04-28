@@ -1,6 +1,10 @@
 # Chip 8 Emulator 
 A basic chip 8 emulator written in c++ 
 
+## Screenshots
+![](https://github.com/Akshaydevan/chip8-emulator/blob/main/screenshots/kaleidoscope%202.jpg)
+![](https://github.com/Akshaydevan/chip8-emulator/blob/main/screenshots/pong.jpg)
+
 ## How to run
 Give to path to the rom you want to run as the argument to the binary file
 ```
