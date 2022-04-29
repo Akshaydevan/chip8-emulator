@@ -109,6 +109,8 @@ bool Renderer::poll()
             default:
                 break;
             }
+        } else if (evt.type == sf::Event::KeyReleased) {
+            m_keyboardHandler.setKeyPress(-1);
         }
     }
 

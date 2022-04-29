@@ -13,6 +13,5 @@ public:
 private:
     KeyboardHandler() = default;
 
-    std::vector<int> m_keyPress;
-    int index = 0;
+    int m_key = -1;
 };

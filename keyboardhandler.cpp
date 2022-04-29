@@ -9,13 +9,10 @@ KeyboardHandler& KeyboardHandler::getInstance()
 
 void KeyboardHandler::setKeyPress(int key)
 {
-    m_keyPress.push_back(key);
+    m_key = key;
 }
 
 int KeyboardHandler::getKeyPress()
 {
-    if (m_keyPress.size() - index > 0) {
-        return m_keyPress[index++];
-    } else
-        return -1;
+    return m_key;
 }
