@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 
 #include "emulator.hpp"
@@ -18,20 +19,37 @@ int main(int argc, char* argv[])
     }
 
     if (!chip8.loadROM(rom)) {
-        std::cerr << "cannot open rom\n"
-                  << std::endl;
+        std::cerr << "cannot open rom\n";
         return -1;
     }
 
     renderer.init();
+
+    int cpuCounter = 0;
+    auto cpuClock = std::chrono::high_resolution_clock::now();
+
     while (!chip8.isEnd()) {
-        chip8.runNextCycle();
+        // Run only 50 cpu cycles per 100 milliseconds (500 per seconds)
+        // to simulate real speed of chip8
+        if (cpuCounter < 50) {
+            chip8.runNextCycle();
 
-        if (!renderer.poll())
-            break;
+            if (!renderer.poll())
+                break;
 
-        if (chip8.shouldDraw())
-            renderer.render(chip8.getDisplayBuffer());
+            if (chip8.shouldDraw())
+                renderer.render(chip8.getDisplayBuffer());
+        }
+
+        auto now = std::chrono::high_resolution_clock::now();
+        int timeElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - cpuClock).count();
+
+        if (timeElapsed >= 100) {
+            cpuCounter = 0;
+            cpuClock = std::chrono::high_resolution_clock::now();
+        }
+
+        cpuCounter++;
     }
 
     return 0;
